@@ -1,42 +1,48 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 export const RegisterFormScreen = ({ navigation }) => {
-    return (
-        <View>
-            {/* Aquí coloca tu formulario de registro */}
-            <Text>Formulario de Registro</Text>
-            {/* Agrega campos de entrada, botones, etc. */}
-        </View>
-    );
-};
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [dateOfBirth, setDateOfBirth] = useState('');
+    const [gender, setGender] = useState('');
 
-
-
-/* export const RegisterFormScreen = ({ navigation }) => {
-        const [email, setEmail] = useState('');
-        const [password, setPassword] = useState('')
-        const [firstName, setFirstName] = useState('');
-        const [lastName, setLastName] = useState('');
-        const [dateOfBirth, setDateOfBirth] = useState(new Date ());
-        const [gender, setGender] = useState('');
-        const [showDatePicker, setShowDatePicker] = useState(false);
-
-
-
+    const auth = getAuth(); // Obteniendo el objeto de autenticación de Firebase
 
     const handleRegister = () => {
+        // Validar que los campos no estén vacíos
+        if (!email || !password || !firstName || !lastName || !dateOfBirth || !gender) {
+            Alert.alert('Todos los campos son requeridos');
+            return;
+        }
+
+        // Crear el usuario en Firebase Auth
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
+                // Usuario creado exitosamente
                 console.log('Usuario registrado:', userCredential.user);
                 navigation.navigate('Pets');
             })
             .catch((error) => {
+                // Si hay un error, mostrar mensaje de error
                 Alert.alert('Error al registrar el usuario');
                 console.error('Error al registrar:', error);
             });
+    };
+
+    // Función para formatear la fecha de nacimiento con barras o guiones
+    const formatDOB = (dob) => {
+        // Reemplazar los guiones por barras
+        dob = dob.replace(/-/g, '/');
+        // Separar la fecha en partes por las barras
+        const parts = dob.split('/');
+        // Si hay menos de 3 partes, no es una fecha completa
+        if (parts.length < 3) return dob;
+        // Formatear la fecha como dd/mm/yyyy
+        return parts[2] + '/' + parts[1] + '/' + parts[0];
     };
 
     return (
@@ -69,9 +75,9 @@ export const RegisterFormScreen = ({ navigation }) => {
             />
             <TextInput
                 style={styles.input}
-                placeholder="Fecha de Nacimiento"
-                value={dateOfBirth}
-                onChangeText={setDateOfBirth}
+                placeholder="Fecha de Nacimiento (dd/mm/yyyy)"
+                value={formatDOB(dateOfBirth)}
+                onChangeText={(text) => setDateOfBirth(formatDOB(text))}
             />
             <TextInput
                 style={styles.input}
@@ -114,5 +120,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
-*/
 
+export default RegisterFormScreen;

@@ -4,66 +4,232 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Información de Mascotas</title>
+<link rel="stylesheet" href="/screens/styles.css">
 <style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f7f7f7;
-    margin: 0;
-    padding: 20px;
-  }
-  .container {
-    background-color: #fff;
+  /* Estilos para los rectángulos de cada animal */
+  .animal-container {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 400px;
-    margin: auto;
+    overflow: hidden;
+    position: relative;
   }
-  input, select {
+
+  /* Estilos específicos para cada tipo de animal */
+  .animal-container.gato {
+    background-color: #87CEFA; /* Celeste para gato */
+  }
+
+  .animal-container.perro {
+    background-color: #ADD8E6; /* Azul claro para perro */
+  }
+
+  .animal-container.ave {
+    background-color: #90EE90; /* Verde claro para ave */
+  }
+
+  .animal-container.conejo {
+    background-color: #f5f53a; /* Amarillo para conejo */
+  }
+
+  /* Estilos para el texto del contenedor */
+  .animal-text {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: #fff; /* Texto en blanco para mayor contraste */
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+
+  /* Estilos para el botón de cerrar */
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #FF6347; /* Rojo para el botón */
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    display: none;
+  }
+
+  /* Mostrar el botón de cerrar cuando el contenedor tiene la clase "show" */
+  .animal-container.show .close-button {
+    display: block;
+  }
+
+  /* Estilos para el modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+  }
+
+  @keyframes bounce {
+    0% {
+      transform: scale(0.8);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Estilos para el contenido del modal */
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    margin-top: 10%; /* Ajuste de la posición vertical */
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 80%;
+    position: relative;
+    animation: bounce 0.5s ease;
+  }
+
+  /* Estilos para el encabezado del modal */
+  .modal-header {
+    padding: 10px 16px;
+    background-color: #5cb85c;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    position: relative; /* Ajuste de la posición */
+  }
+
+  /* Estilos para el botón de cierre dentro del encabezado del modal */
+  .modal-header .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #FF6347; /* Rojo para el botón */
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Estilos para el cuerpo del modal */
+  .modal-body {
+    padding: 10px 16px;
+  }
+
+  /* Estilos para los campos de entrada en el modal */
+  .modal-body input {
+    width: calc(100% - 20px); /* Tamaño del campo de entrada */
+    margin-bottom: 10px; /* Espaciado entre campos */
+    padding: 5px; /* Espaciado dentro del campo */
+    border-radius: 4px; /* Borde redondeado */
+    border: 1px solid #ccc; /* Borde del campo */
+  }
+
+  /* Estilos para el botón de guardar */
+  .save-button {
+    background-color: #5cb85c; /* Verde para el botón */
+    color: #fff; /* Texto en blanco para mayor contraste */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px; /* Espacio superior */
+  }
+
+  /* Estilos adicionales para los campos de entrada */
+  input[type="text"],
+  input[type="number"] {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
+    margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
-  }
-  button {
-    width: 100%;
-    padding: 10px;
-    background-color: #5cb85c;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #45a049;
   }
 </style>
 </head>
 <body>
 <div class="container">
-  <h2>Información de la Mascota</h2>
-  <form>
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" required>
-
-    <label for="tipo">Tipo de Mascota:</label>
-    <select id="tipo" name="tipo">
-      <option value="perro">Perro</option>
-      <option value="gato">Gato</option>
-      <option value="ave">Ave</option>
-      <option value="otro">Otro</option>
-    </select>
-
-    <label for="edad">Edad:</label>
-    <input type="number" id="edad" name="edad" required>
-
-    <label for="raza">Raza:</label>
-    <input type="text" id="raza" name="raza">
-
-    <button type="submit">Guardar</button>
-  </form>
+  <h2>Información de su Mascota</h2>
+  <!-- Contenedor de la imagen de gato -->
+  <div class="animal-container gato" onclick="showModal('gato')">
+    <img src="/assets/gatito.png" alt="Gato" width="100%">
+    <div class="animal-text">Gato</div>
+  </div>
+  
+  <!-- Contenedor de la imagen de perro -->
+  <div class="animal-container perro" onclick="showModal('perro')">
+    <img src="/assets/perrito.png" alt="Perro" width="100%">
+    <div class="animal-text">Perro</div>
+  </div>
+  
+  <!-- Contenedor de la imagen de ave -->
+  <div class="animal-container ave" onclick="showModal('ave')">
+    <img src="/assets/loro.png" alt="Ave" width="100%">
+    <div class="animal-text">Ave</div>
+  </div>
+  
+  <!-- Contenedor de la imagen de conejo -->
+  <div class="animal-container conejo" onclick="showModal('conejo')">
+    <img src="/assets/conejo.png" alt="Conejo" width="100%">
+    <div class="animal-text">Conejo</div>
+  </div>
 </div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">Información de la Mascota</h2>
+      <!-- Aquí está el botón de cierre -->
+      <button class="close-button" onclick="closeModal()">X</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <form>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <label for="edad">Edad:</label>
+        <input type="number" id="edad" name="edad" required>
+
+        <label for="raza">Raza:</label>
+        <input type="text" id="raza" name="raza">
+        
+        <button class="save-button">Guardar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/src/config/script.js"></script>
 </body>
 </html>
